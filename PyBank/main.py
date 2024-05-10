@@ -29,6 +29,7 @@ with open(filepath, "r") as file:
 
         net_total += profit_loss
 
+        # truthy check for if prev is a valid value. skips this block on the first line
         if prev:
             change = profit_loss - prev
             changes.append(change)
