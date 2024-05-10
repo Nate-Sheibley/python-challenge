@@ -29,7 +29,7 @@ with open(filepath, "r") as file:
 
         net_total += profit_loss
 
-        if isinstance(prev, int):
+        if prev:
             change = profit_loss - prev
             changes.append(change)
             max_change = (line[0], change) if max_change[1] < change else max_change

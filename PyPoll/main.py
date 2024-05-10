@@ -7,6 +7,8 @@ filename = "election_data.csv"
 filepath = os.path.join(".", "Resources" , filename)
 
 count_ballots = 0
+# placeholder "" canidate with minimum values
+# can be exluded with a truthy if "": check.
 canidate_dict = {
     "" : {
         "votes" : 0,
@@ -26,6 +28,8 @@ with open(filepath,"r") as file:
         else:
             canidate_dict[canidate] = {"votes" : 1}
 
+# placeholder "" canidate so that prev canidate works proerly in the first pass
+# supported by default canidate dict values above
 prev = ""
 for canidate in canidate_dict.keys():
     canidate_dict[canidate]["percent"] = round(canidate_dict[canidate]["votes"] / count_ballots, 3)
@@ -37,36 +41,33 @@ header_str = "Election Results"
 spacer = "-------------------------"
 ballot_count_str = f'Total Votes: {count_ballots}'
 winner_str = f'Winner: {winner}'
-
+#generater for canidate strings to be reported.
 def canidates_strs(dict):
-    canidate_strs = []
     for canidate in dict.keys():
+        #truthy statement. values for all canidates so long as they are not ""
         if canidate:
-            canidate_strs.append([f'{canidate}: {dict[canidate]["percent"]}% ({dict[canidate]["votes"]})'])
-    return canidate_strs
+            yield [f'{canidate}: {dict[canidate]["percent"]}% ({dict[canidate]["votes"]})']
 
 #print to terminal
 print(header_str)
 print(spacer)
 print(ballot_count_str)
 print(spacer)
+# was playing around with generators, must include [0] to prevent list syntax printing in the terminal
+# did not have to do that with a return list from canidates_strs 
 for line in canidates_strs(canidate_dict):
-    print(line)
+    print(line[0])
 print(spacer)
 print(winner_str)
 print(spacer)
 
+#path to write to
 filename = "results.txt"
 filepath = os.path.join(".", "analysis", filename)
-
+#write report to analysis path
 with open(filepath, "w+") as file:
     csv_writer = csv.writer(file)
-    #not very pythonic and very messy wrt scope...
-    csv_writer.writerow([header_str])
-    csv_writer.writerow([spacer])
-    csv_writer.writerow([ballot_count_str])
-    csv_writer.writerow([spacer])
+    # unsure how to make this more pythonic due to the generator from canidates_strs
+    csv_writer.writerows([[header_str], [spacer], [ballot_count_str], [spacer]])
     csv_writer.writerows(canidates_strs(canidate_dict))
-    csv_writer.writerow([spacer])
-    csv_writer.writerow([winner_str])
-    csv_writer.writerow([spacer])
+    csv_writer.writerows([[spacer], [winner_str], [spacer]])
