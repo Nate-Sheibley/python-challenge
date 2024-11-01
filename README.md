@@ -1,4 +1,4 @@
-# introduction to python
+# Introductory python excercise
 
 UCBerkeley-Ext data analytics bootcamp HW3
 
